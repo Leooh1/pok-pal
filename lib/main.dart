@@ -37,7 +37,11 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: Container(
-        child: Text("hi"),
+        child: Text(
+          "폰 폭팔.app",
+          style: TextStyle(fontSize: 30),
+        ),
+        padding: EdgeInsets.all(10),
       ),
     );
   }
