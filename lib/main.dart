@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +15,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'greeting_maker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const Home(),
@@ -34,52 +35,76 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   String name = "_";
   int age = 0;
+  String greeting = "";
 
   bool _checkAge(String str) {
-    if (str == null) {
-      return true;
-    }
     return double.tryParse(str) != null;
+  }
+
+  void _setGreeting() {
+    setState(() {
+      greeting = "안녕하세요 $name님, $age ${age > 80 ? "살이나 늙었군요!" : "살이네요."}";
+    });
+  }
+
+  void _copyGreeting() async {
+    await Clipboard.setData(ClipboardData(text: greeting));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(Icons.waving_hand_rounded),
+        title: Text("인삿말 제조기"),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.settings_rounded))
+          GestureDetector(
+            onTap: _copyGreeting,
+            child: IconButton(
+              onPressed: _copyGreeting,
+              icon: const Icon(Icons.copy_rounded),
+              tooltip: "클립보드에 복사",
+            ),
+          )
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "안녕하세요 $name님\n$age ${age > 80 ? "살이나 늙었군요!" : "살이네요."}",
-              style: TextStyle(fontSize: 30),
+              greeting,
+              style: const TextStyle(fontSize: 30),
             ),
-            TextField(
-              decoration: InputDecoration(labelText: "이름을 입력하셈요"),
-              controller: textControllerName,
-              onChanged: (text) {
-                setState(() {
-                  name = textControllerName.text;
-                });
-              },
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: "나이를 입력하세요"),
-              controller: textControllerAge,
-              onChanged: (text) {
-                String _age = textControllerAge.text;
-                if (!_checkAge(_age)) {
-                  _age = "0";
-                }
-                setState(() {
-                  age = int.parse(_age);
-                });
-              },
+            Column(
+              children: [
+                TextField(
+                  decoration: const InputDecoration(labelText: "이름을 입력하세요"),
+                  controller: textControllerName,
+                  onChanged: (text) {
+                    setState(() {
+                      name = textControllerName.text;
+                    });
+                    _setGreeting();
+                  },
+                ),
+                TextField(
+                  decoration: const InputDecoration(labelText: "나이를 입력하세요"),
+                  controller: textControllerAge,
+                  onChanged: (text) {
+                    String _age = textControllerAge.text;
+                    if (!_checkAge(_age)) {
+                      _age = "0";
+                    }
+                    setState(() {
+                      age = int.parse(_age);
+                    });
+                    _setGreeting();
+                  },
+                ),
+              ],
             ),
           ],
         ),
