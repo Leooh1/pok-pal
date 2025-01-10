@@ -90,7 +90,7 @@ class _HomeState extends State<Home> {
                     height: 5,
                   ),
                   CupertinoTextField(
-                    placeholder: "나이를 입력하세요",
+                    placeholder: "나이를 입력하세요ㅗ",
                     controller: textControllerAge,
                     onChanged: (text) {
                       String _age = textControllerAge.text;
